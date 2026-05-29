@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>IELTS 7 Fluency Lab</title>
+    <link rel="stylesheet" href="styles.css?v=english" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Training navigation">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">7</div>
+          <div>
+            <p class="eyebrow">IELTS 7</p>
+            <h1>Fluency Lab</h1>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="Main navigation">
+          <button class="nav-item is-active" data-view="dashboard">
+            <span aria-hidden="true">⌂</span>
+            Overview
+          </button>
+          <button class="nav-item" data-view="speaking">
+            <span aria-hidden="true">◉</span>
+            Speaking
+          </button>
+          <button class="nav-item" data-view="listening">
+            <span aria-hidden="true">▶</span>
+            Listening
+          </button>
+          <button class="nav-item" data-view="reading">
+            <span aria-hidden="true">▤</span>
+            Reading
+          </button>
+          <button class="nav-item" data-view="writing">
+            <span aria-hidden="true">✎</span>
+            Writing
+          </button>
+          <button class="nav-item" data-view="planner">
+            <span aria-hidden="true">✓</span>
+            Plan
+          </button>
+        </nav>
+
+        <div class="target-box">
+          <span>Target score</span>
+          <strong>Band 7.0</strong>
+          <small>Speaking naturalness first</small>
+        </div>
+      </aside>
+
+      <main>
+        <section class="topbar" aria-label="Today's target">
+          <div>
+            <p class="eyebrow">Today's training</p>
+            <h2 id="todayTitle">Train until answers come without translation</h2>
+          </div>
+          <div class="quick-actions">
+            <button class="icon-button" id="resetDayBtn" type="button" title="Reset today's progress" aria-label="Reset today's progress">↻</button>
+            <button class="primary-button" id="jumpSpeakingBtn" type="button">
+              <span aria-hidden="true">◉</span>
+              Enter speaking core training
+            </button>
+          </div>
+        </section>
+
+        <section class="view is-visible" id="dashboard" aria-labelledby="dashboardTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Learning cockpit</p>
+              <h2 id="dashboardTitle">Balanced four-skill progress</h2>
+            </div>
+            <span class="status-pill" id="streakLabel">0-day streak</span>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel score-panel">
+              <div class="score-ring" aria-label="Goal completion">
+                <svg viewBox="0 0 120 120" role="img" aria-label="Completion chart">
+                  <circle cx="60" cy="60" r="49" class="ring-bg"></circle>
+                  <circle cx="60" cy="60" r="49" class="ring-progress" id="ringProgress"></circle>
+                </svg>
+                <div>
+                  <strong id="completionValue">0%</strong>
+                  <span>Today</span>
+                </div>
+              </div>
+              <div class="score-copy">
+                <p class="eyebrow">Band 7 path</p>
+                <h3>45 minutes daily, 20 minutes for speaking</h3>
+                <p>Target rhythm: 8 minutes listening, 20 speaking, 7 reading, 10 writing.</p>
+              </div>
+            </article>
+
+            <article class="panel voice-panel">
+              <canvas id="voiceCanvas" width="640" height="220" aria-label="Speaking rhythm visualization"></canvas>
+              <div class="voice-overlay">
+                <p class="eyebrow">Speaking core</p>
+                <h3>Natural response chain</h3>
+                <p id="currentMicroPrompt">Give your point first, then the reason, then one real detail.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="skill-grid" aria-label="Four-skill training entry points">
+            <button class="skill-card" data-view-jump="speaking" type="button">
+              <span class="skill-icon speaking">◉</span>
+              <strong>Speaking</strong>
+              <small>Instant answers, shadowing, natural expression upgrades</small>
+              <meter min="0" max="100" value="0" id="meterSpeaking"></meter>
+            </button>
+            <button class="skill-card" data-view-jump="listening" type="button">
+              <span class="skill-icon listening">▶</span>
+              <strong>Listening</strong>
+              <small>Dictation, paraphrase recognition, chunk awareness</small>
+              <meter min="0" max="100" value="0" id="meterListening"></meter>
+            </button>
+            <button class="skill-card" data-view-jump="reading" type="button">
+              <span class="skill-icon reading">▤</span>
+              <strong>Reading</strong>
+              <small>Timed scanning, question location, paragraph purpose</small>
+              <meter min="0" max="100" value="0" id="meterReading"></meter>
+            </button>
+            <button class="skill-card" data-view-jump="writing" type="button">
+              <span class="skill-icon writing">✎</span>
+              <strong>Writing</strong>
+              <small>Idea development, Task 2 structure, sentence upgrades</small>
+              <meter min="0" max="100" value="0" id="meterWriting"></meter>
+            </button>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Daily reps</p>
+                  <h3>Today's check-in list</h3>
+                </div>
+                <button class="ghost-button" id="completeAllBtn" type="button">Complete one round</button>
+              </div>
+              <div class="check-list" id="dailyChecklist"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Natural English</p>
+                  <h3>Chunks to say automatically today</h3>
+                </div>
+                <button class="icon-button" id="shuffleChunkBtn" type="button" title="Shuffle set" aria-label="Shuffle set">↻</button>
+              </div>
+              <div class="chunk-stack" id="chunkStack"></div>
+            </article>
+          </div>
+
+          <div class="tracking-layout">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Training status</p>
+                  <h3>Live progress records</h3>
+                </div>
+                <span class="status-pill">Auto saved</span>
+              </div>
+              <div class="status-grid" id="statusSummary"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Recent records</p>
+                  <h3>Question and answer log</h3>
+                </div>
+              </div>
+              <div class="activity-log" id="activityLog"></div>
+            </article>
+          </div>
+
+          <article class="panel round-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Round history</p>
+                <h3>Completed training rounds</h3>
+              </div>
+            </div>
+            <div class="round-history" id="roundHistory"></div>
+          </article>
+
+          <article class="panel calendar-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">IELTS calendar</p>
+                <h3>Daily check-ins and overall band</h3>
+              </div>
+              <button class="ghost-button" id="calendarToggleBtn" type="button" aria-expanded="false">Expand calendar</button>
+            </div>
+            <div class="calendar-body" id="calendarPanel" hidden>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="view" id="speaking" aria-labelledby="speakingTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Speaking lab</p>
+              <h2 id="speakingTitle">Switch from translation to automatic English response</h2>
+            </div>
+            <span class="status-pill strong">Core module</span>
+          </div>
+
+          <div class="speaking-layout">
+            <article class="panel prompt-lab">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow" id="promptType">IELTS Speaking Part 1</p>
+                  <h3 id="speakingPrompt">What kind of work would you like to do in the future?</h3>
+                </div>
+                <button class="icon-button" id="newPromptBtn" type="button" title="New prompt" aria-label="New prompt">↻</button>
+              </div>
+
+              <div class="timer-row">
+                <div class="timer" id="speechTimer">00:45</div>
+                <div class="segmented" role="group" aria-label="Answer duration">
+                  <button class="segment is-active" data-seconds="45" type="button">45s</button>
+                  <button class="segment" data-seconds="60" type="button">60s</button>
+                  <button class="segment" data-seconds="120" type="button">120s</button>
+                </div>
+              </div>
+
+              <div class="button-row">
+                <button class="primary-button" id="startSpeakBtn" type="button">
+                  <span aria-hidden="true">●</span>
+                  Start answer
+                </button>
+                <button class="ghost-button" id="stopSpeakBtn" type="button" disabled>
+                  <span aria-hidden="true">■</span>
+                  Stop
+                </button>
+                <button class="ghost-button" id="speakPromptBtn" type="button">
+                  <span aria-hidden="true">▶</span>
+                  Play prompt
+                </button>
+              </div>
+
+              <label class="field-label" for="answerText">Answer text</label>
+              <textarea id="answerText" rows="8" placeholder="You can use speech transcription or type your answer directly."></textarea>
+
+              <div class="button-row">
+                <button class="primary-button" id="analyzeAnswerBtn" type="button">
+                  <span aria-hidden="true">✓</span>
+                  Analyze naturalness
+                </button>
+                <button class="ghost-button" id="saveSpeakingBtn" type="button">Save session</button>
+              </div>
+            </article>
+
+            <article class="panel feedback-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Fluency feedback</p>
+                  <h3>Naturalness feedback</h3>
+                </div>
+                <span class="score-badge" id="naturalScore">--</span>
+              </div>
+              <div class="metric-grid">
+                <div class="metric">
+                  <span>Pace</span>
+                  <strong id="wpmMetric">--</strong>
+                </div>
+                <div class="metric">
+                  <span>Linking</span>
+                  <strong id="linkMetric">--</strong>
+                </div>
+                <div class="metric">
+                  <span>Fillers</span>
+                  <strong id="fillerMetric">--</strong>
+                </div>
+                <div class="metric">
+                  <span>Development</span>
+                  <strong id="depthMetric">--</strong>
+                </div>
+              </div>
+              <div class="feedback-list" id="feedbackList"></div>
+            </article>
+          </div>
+
+          <div class="two-column speaking-tools">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Shadow loop</p>
+                  <h3>Shadowing chunks</h3>
+                </div>
+                <button class="icon-button" id="nextShadowBtn" type="button" title="Next line" aria-label="Next line">↻</button>
+              </div>
+              <div class="shadow-card">
+                <p id="shadowLine">To be honest, I used to find it quite challenging, but now it feels a lot more manageable.</p>
+                <small id="shadowNote">Weak forms: connect used to / find it / a lot more.</small>
+              </div>
+              <div class="button-row">
+                <button class="primary-button" id="playShadowBtn" type="button">
+                  <span aria-hidden="true">▶</span>
+                  Play
+                </button>
+                <button class="ghost-button" id="markShadowBtn" type="button">Shadowing complete</button>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Instant response</p>
+                  <h3>Instant response training</h3>
+                </div>
+                <button class="icon-button" id="nextReflexBtn" type="button" title="Next prompt" aria-label="Next prompt">↻</button>
+              </div>
+              <div class="reflex-card">
+                <span id="reflexMode">Soft disagreement</span>
+                <p id="reflexPrompt">Someone says online courses are always better than classroom learning.</p>
+              </div>
+              <div class="reflex-timer" id="reflexTimer">05</div>
+              <div class="button-row">
+                <button class="primary-button" id="startReflexBtn" type="button">5-second response</button>
+                <button class="ghost-button" id="showModelBtn" type="button">Sample answer</button>
+              </div>
+              <p class="model-answer" id="modelAnswer" hidden></p>
+            </article>
+          </div>
+
+          <article class="panel template-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Speaking templates</p>
+                <h3>8 flexible sentence patterns</h3>
+              </div>
+              <span class="status-pill">Band 7+</span>
+            </div>
+            <div class="template-grid">
+              <div class="template-card"><strong>Giving an opinion</strong><p>The way I see it, ...</p></div>
+              <div class="template-card"><strong>Soft disagreement</strong><p>I wouldn't say that's always the case, because ...</p></div>
+              <div class="template-card"><strong>Adding nuance</strong><p>That being said, it really depends on ...</p></div>
+              <div class="template-card"><strong>Personal example</strong><p>In my case, the biggest difference was ...</p></div>
+              <div class="template-card"><strong>Clarifying</strong><p>What I mean is, ...</p></div>
+              <div class="template-card"><strong>Comparing</strong><p>Compared with ..., I find ... much more ...</p></div>
+              <div class="template-card"><strong>Explaining impact</strong><p>It has a lot to do with ...</p></div>
+              <div class="template-card"><strong>Concluding naturally</strong><p>That's probably why I tend to ...</p></div>
+            </div>
+          </article>
+
+          <article class="panel long-sentence-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Daily sentence</p>
+                <h3>Daily complex sentence memorization</h3>
+              </div>
+              <span class="status-pill" id="longSentenceStatus">Not checked in</span>
+            </div>
+            <div class="long-sentence-card">
+              <p id="longSentenceText"></p>
+              <small id="longSentenceMeaning"></small>
+            </div>
+            <div class="chunk-stack compact-stack" id="longSentenceChunks"></div>
+            <p class="micro-note" id="longSentenceFocus"></p>
+            <div class="button-row">
+              <button class="primary-button" id="playLongSentenceBtn" type="button">Play full sentence</button>
+              <button class="ghost-button" id="playLongSentenceChunksBtn" type="button">Chunk shadowing</button>
+              <button class="ghost-button" id="markLongSentenceBtn" type="button">Mark memorized</button>
+              <button class="icon-button" id="nextLongSentenceBtn" type="button" title="New sentence" aria-label="New sentence">↻</button>
+            </div>
+          </article>
+
+          <article class="panel phrase-upgrader">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Upgrade bank</p>
+                <h3>Turn written English into natural spoken English</h3>
+              </div>
+              <button class="ghost-button" id="loadPhraseBtn" type="button">Random practice</button>
+            </div>
+            <div class="upgrade-grid">
+              <div>
+                <label class="field-label" for="stiffPhrase">Original sentence</label>
+                <textarea id="stiffPhrase" rows="4">I think it is very important because it can help people improve themselves.</textarea>
+              </div>
+              <div>
+                <label class="field-label" for="naturalPhrase">Natural version</label>
+                <textarea id="naturalPhrase" rows="4" placeholder="Rewrite it so it sounds like real spoken English."></textarea>
+              </div>
+            </div>
+            <div class="button-row">
+              <button class="primary-button" id="checkPhraseBtn" type="button">Show upgrade direction</button>
+              <button class="ghost-button" id="playNaturalBtn" type="button">Play natural version</button>
+            </div>
+            <div class="phrase-result" id="phraseResult"></div>
+          </article>
+        </section>
+
+        <section class="view" id="listening" aria-labelledby="listeningTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Listening drills</p>
+              <h2 id="listeningTitle">Dictation, focused listening, chunk recognition</h2>
+            </div>
+            <span class="status-pill" id="listeningStatusPill">No score yet</span>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Dictation</p>
+                  <h3>One-sentence dictation</h3>
+                </div>
+                <button class="icon-button" id="nextDictationBtn" type="button" title="New sentence" aria-label="New sentence">↻</button>
+              </div>
+              <p class="dictation-topic" id="dictationTopic">Campus life</p>
+              <div class="button-row">
+                <button class="primary-button" id="playDictationBtn" type="button">
+                  <span aria-hidden="true">▶</span>
+                  Clear play
+                </button>
+                <button class="ghost-button" id="slowDictationBtn" type="button">Slow replay</button>
+                <button class="ghost-button" id="chunkDictationBtn" type="button">Chunk replay</button>
+                <button class="ghost-button" id="revealDictationBtn" type="button">Reveal transcript</button>
+              </div>
+              <p class="micro-note">Playback starts with a silent warm-up so the first word is not cut off. Listen once fully, then check slowly.</p>
+              <textarea id="dictationInput" rows="5" placeholder="Write exactly what you hear."></textarea>
+              <button class="primary-button" id="checkDictationBtn" type="button">Check</button>
+              <div class="dictation-result" id="dictationResult"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Paraphrase</p>
+                  <h3>Paraphrase sensitivity</h3>
+                </div>
+                <button class="icon-button" id="nextParaBtn" type="button" title="Next set" aria-label="Next set">↻</button>
+              </div>
+              <div class="para-card">
+                <span>Listening word</span>
+                <strong id="paraSource">cheap</strong>
+              </div>
+              <div class="option-grid" id="paraOptions"></div>
+              <div class="dictation-result" id="paraResult"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="reading" aria-labelledby="readingTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Reading test</p>
+              <h2 id="readingTitle">IELTS Academic reading set</h2>
+            </div>
+            <div class="reading-controls">
+              <div class="timer compact" id="readingTimer">40:00</div>
+              <div class="segmented compact-segments" role="group" aria-label="Reading duration">
+                  <button class="segment" data-reading-seconds="1200" type="button">20m</button>
+                  <button class="segment is-active" data-reading-seconds="2400" type="button">40m</button>
+                  <button class="segment" data-reading-seconds="3600" type="button">60m</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="reading-layout">
+            <article class="panel passage-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Passages</p>
+                  <h3 id="passageTitle">Urban Green Corridors</h3>
+                </div>
+                <button class="primary-button" id="startReadingBtn" type="button">Start timer</button>
+              </div>
+              <p class="dictation-topic" id="passageMeta">3 passages · IELTS-style question set</p>
+              <p id="passageText"></p>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Questions</p>
+                  <h3>Location and inference</h3>
+                </div>
+                <div class="button-row compact-row">
+                  <button class="ghost-button" id="randomPassageBtn" type="button">New set</button>
+                  <button class="icon-button" id="nextPassageBtn" type="button" title="New set" aria-label="New set">↻</button>
+                </div>
+              </div>
+              <div id="readingQuestions" class="question-list"></div>
+              <button class="primary-button" id="checkReadingBtn" type="button">Submit reading</button>
+              <div class="dictation-result" id="readingResult"></div>
+            </article>
+          </div>
+
+          <article class="panel import-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Own materials</p>
+                <h3>Import your own IELTS reading material</h3>
+              </div>
+              <button class="ghost-button" id="loadImportedReadingBtn" type="button">Load reading</button>
+            </div>
+            <div class="upgrade-grid">
+              <div>
+                <label class="field-label" for="importReadingTitle">Title</label>
+                <input id="importReadingTitle" type="text" placeholder="Cambridge IELTS passage title" />
+                <label class="field-label" for="importReadingText">Passage text</label>
+                <textarea id="importReadingText" rows="7" placeholder="Paste reading material you own or are licensed to use."></textarea>
+              </div>
+              <div>
+                <label class="field-label" for="importReadingQuestions">Question format</label>
+                <textarea id="importReadingQuestions" rows="10" placeholder="One question per line: question | option A | option B | option C | correct number 1-3 | evidence sentence"></textarea>
+                <p class="micro-note">Official test texts are not bundled. You can import material you have purchased or own for local practice.</p>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="view" id="writing" aria-labelledby="writingTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Writing studio</p>
+              <h2 id="writingTitle">Task 2 idea development</h2>
+            </div>
+            <span class="status-pill">10 min/day</span>
+          </div>
+
+          <div class="writing-layout">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Prompt</p>
+                  <h3 id="writingPrompt">Some people believe that children should start learning a foreign language at primary school. To what extent do you agree or disagree?</h3>
+                </div>
+                <button class="icon-button" id="nextWritingBtn" type="button" title="New prompt" aria-label="New prompt">↻</button>
+              </div>
+              <div class="outline-grid">
+                <label>
+                  Position
+                  <input id="thesisInput" type="text" placeholder="I partly agree because..." />
+                </label>
+                <label>
+                  Body paragraph 1
+                  <input id="bodyOneInput" type="text" placeholder="Main reason + example" />
+                </label>
+                <label>
+                  Body paragraph 2
+                  <input id="bodyTwoInput" type="text" placeholder="Balance or second reason" />
+                </label>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Draft</p>
+                  <h3>Timed writing draft</h3>
+                </div>
+                <span class="score-badge" id="wordCount">0</span>
+              </div>
+              <textarea id="essayInput" rows="12" placeholder="Write a Task 2 paragraph or a complete short essay."></textarea>
+              <div class="button-row">
+                <button class="primary-button" id="analyzeEssayBtn" type="button">Deep check</button>
+                <button class="ghost-button" id="saveWritingBtn" type="button">Save writing</button>
+              </div>
+              <div class="feedback-list" id="essayFeedback"></div>
+              <div class="writing-review" id="writingReview"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="planner" aria-labelledby="plannerTitle">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Roadmap</p>
+              <h2 id="plannerTitle">12-week IELTS Band 7 roadmap</h2>
+            </div>
+            <button class="primary-button" id="markWeekBtn" type="button">Advance one week</button>
+          </div>
+
+          <div class="planner-grid" id="plannerGrid"></div>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Speaking formula</p>
+                <h3>Natural speaking answer framework</h3>
+              </div>
+              <button class="ghost-button" id="copyFormulaBtn" type="button">Copy framework</button>
+            </div>
+            <div class="formula-grid">
+              <div>
+                <strong>Part 1</strong>
+                <p>Direct answer → tiny reason → personal detail.</p>
+              </div>
+              <div>
+                <strong>Part 2</strong>
+                <p>Scene → feeling → concrete moment → reflection.</p>
+              </div>
+              <div>
+                <strong>Part 3</strong>
+                <p>General view → contrast → example → soft conclusion.</p>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js?v=english"></script>
+  </body>
+</html>
